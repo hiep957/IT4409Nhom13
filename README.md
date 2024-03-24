@@ -1,1 +1,3 @@
-# IT4409Nhom13
+# IT4409Nhom1
+
+Hướng dẫn sử dụng
