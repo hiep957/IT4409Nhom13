@@ -1,1 +1,1 @@
-ssss
+console.log("123");
