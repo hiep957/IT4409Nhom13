@@ -7,9 +7,6 @@ import { check, validationResult } from "express-validator";
 
 const router = express.Router();
 
-router.get("/me", Auth, async (req, res) => {
-  const userId = req.body;
-});
 router.post(
   "/register",
   [
@@ -107,18 +104,26 @@ router.post(
     }
   }
 );
-router.get('/logout',Auth, (req: Request, res: Response) => {
-    try {
-        
-        res.cookie("Auth_Token", {expires: new Date(0)});
+router.get("/logout", Auth, (req: Request, res: Response) => {
+  try {
+    res.cookie("Auth_Token", { expires: new Date(0) });
     res.status(200).json({ msg: " Logout successfully" });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ msg: " Logout failed" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: " Logout failed" });
+  }
+});
+router.get("/view_user", Auth, async (req: Request, res: Response) => {
+  try {
+    const ViewUser = await User.findById(req.userId).select("-password");
+    if (!ViewUser) {
+      return res.status(400).json({ msg: "User not found" });
     }
-
-})
-router.post("/view/");
-router.get("/viewall");
+    res.json(ViewUser);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: "Something went wrong" });
+  }
+});
 
 export default router;

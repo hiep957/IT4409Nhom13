@@ -8,7 +8,8 @@ declare global {
   }
 }
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies["Auth_Token"];
+  
+  const token = req.cookies['Auth_Token'];
   if (!token) {
     return res.status(401).json({ mes: "unAuthorization" });
   }
