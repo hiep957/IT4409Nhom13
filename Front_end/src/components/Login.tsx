@@ -1,8 +1,13 @@
 import React from 'react';
 
 
+export type SignInFromData = {
+  email : string,
+  password: string
+}
 
-function Login() {
+const Login = () => {
+  const 
   return (
     <div>Login</div>
   )
