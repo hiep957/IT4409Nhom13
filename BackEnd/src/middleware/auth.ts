@@ -14,8 +14,11 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     return res.status(401).json({ mes: "unAuthorization" });
   }
   try {
+    console.log(token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY as string);
     req.userId = (decoded as JwtPayload).userId;
+    console.log(decoded)
+    console.log(req.userId);
     next();
   } catch (err) {
     if (typeof err === "string") {

@@ -38,9 +38,7 @@ router.post(
       await user.save();
 
       const token = jwt.sign(
-        {
-          usedId: user.id,
-        },
+        { userId: user.id },
         process.env.JWT_SECRET_KEY as string,
         { expiresIn: "2h" }
       );
@@ -120,6 +118,15 @@ router.get("/view_user", Auth, async (req: Request, res: Response) => {
       return res.status(400).json({ msg: "User not found" });
     }
     res.json(ViewUser);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: "Something went wrong" });
+  }
+});
+router.get("/validate-token", Auth, (req: Request, res: Response) => {
+  try {
+    console.log("checkvalidate");
+    res.status(200).send({ userId: req.userId });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: "Something went wrong" });
