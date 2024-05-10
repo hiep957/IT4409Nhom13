@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
 import { useForm } from "react-hook-form";
-import ApiClient from "../Api/ApiClient";
+import * as ApiClient from "../Api/ApiClient";
 import { useAppContext } from "../Context/AppContext";
 
 export type RegisterForm = {
@@ -33,8 +33,11 @@ const Register = () => {
     mutation.mutate(data);
   });
   return (
-    <form className="flex flex-col gap-5" onSubmit={onSubmit}>
-      <h2 className="text-3xl font-bold"> Create an Account </h2>
+    <form
+      className="max-w-md mx-auto bg-white rounded-lg shadow-md p-8 items-center  "
+      onSubmit={onSubmit}
+    >
+      <h2 className="text-3xl font-bold mb-5">Create an Account</h2>
       <div className="flex flex-col md:flex-row gap-5">
         <label className="text-blue-700 text-sm font-bold flex-1">
           First Name
@@ -86,34 +89,34 @@ const Register = () => {
           <span className="text-red-500"> {errors.password.message}</span>
         )}
       </label>
-      <label className="text-blue-500 text-sm font-bold flex-1 ">
-        ConfirmPassword{" "}
-        <input
-          type="password"
-          className="border rounded w-full py-1 px-2 font-normal"
-          {...register("confirmPassword", {
-            validate: (val) => {
-              if (!val) {
-                return "This field is required";
-              } else {
-                if (watch("password") !== val) {
-                  return "Your password do no match";
-                }
-              }
-            },
-          })}
-        ></input>
-        {errors.confirmPassword && (
-          <span className="text-red-500">
-            {" "}
-            {errors.confirmPassword.message}
-          </span>
-        )}
-      </label>
-      <span>
+       <label className="text-blue-500 text-sm font-bold flex-1 mb-10">
+    ConfirmPassword{" "}
+    <input
+      type="password"
+      className="border rounded w-full py-1 px-2 font-normal"
+      {...register("confirmPassword", {
+        validate: (val) => {
+          if (!val) {
+            return "This field is required";
+          } else {
+            if (watch("password") !== val) {
+              return "Your password do no match";
+            }
+          }
+        },
+      })}
+    ></input>
+    {errors.confirmPassword && (
+      <span className="text-red-500">
+        {" "}
+        {errors.confirmPassword.message}
+      </span>
+    )}
+  </label>
+      <span className="flex justify-center">
         <button
           type="submit"
-          className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 text-xl "
+          className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 text-xl my-5 "
         >
           Create Account
         </button>

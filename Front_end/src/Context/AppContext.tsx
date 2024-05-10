@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import {loadStripe, Stripe} from "@stripe/stripe-js";
 import {useQuery} from "react-query";
 import Toast from "../components/Toast";
-import apiClient  from "../Api/ApiClient"
+import * as apiClient  from "../Api/ApiClient"
 
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_PUB_KEY || "";
 
