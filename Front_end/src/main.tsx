@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { QueryClient, QueryClientProvider } from "react-query";
-import { AppContextProvider } from './Context/AppContext.tsx';
+import { AppContextProvider } from './contexts/AppContext.tsx';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

@@ -7,8 +7,8 @@ import {
 } from "react-router-dom";
 
 import Layout from './layouts/Layout';
-import Login from "./Pages/Login";
-import Register  from "./Pages/Register";
+import Login from "./pages/SignIn";
+import Register  from "./pages/Register";
 
 function App() {
   const [count, setCount] = useState(0);
