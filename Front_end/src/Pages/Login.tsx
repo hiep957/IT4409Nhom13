@@ -1,89 +1,108 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as ApiClient from "../Api/ApiClient";
 import { useAppContext } from "../contexts/AppContext";
 import { useMutation, useQueryClient } from "react-query";
 
-
-  email : string,
-  password: string
-}
+export type LoginForm = {
+  email: string;
+  password: string;
+};
 
 const Login = () => {
- const QueryClient = useQueryClient();
- const navigate = useNavigate();
- const { showToast} = useAppContext();
+  const QueryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { showToast } = useAppContext();
 
- const location = useLocation();
+  const location = useLocation();
 
- const {register, formState: {errors}, handleSubmit }  = useForm<LoginForm>();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<LoginForm>();
 
- const mutation = useMutation(ApiClient.login, {
-  onSuccess:async() => {
-    showToast({message: "Sign in successfully", type: "SUCCESS"});
-    await QueryClient.invalidateQueries("validateToken");
-    navigate(location.state?.from?.pathname || "/");
-  },
-  onError: async(error: Error) => {
-    showToast({message: error.message, type: "ERROR"})
-  }
-});
+  const mutation = useMutation(ApiClient.login, {
+    onSuccess: async () => {
+      showToast({ message: "Sign in successfully", type: "SUCCESS" });
+      await QueryClient.invalidateQueries("validateToken");
+      navigate(location.state?.from?.pathname || "/");
+    },
+    onError: async (error: Error) => {
+      showToast({ message: error.message, type: "ERROR" });
+    },
+  });
   const onSubmit = handleSubmit((data) => {
     mutation.mutate(data);
   });
 
   return (
-    <form className="flex flex-col gap-5 max-w-md mx-auto bg-white rounded-lg shadow-md p-8 items-center" onSubmit={onSubmit}>
-    <h2 className="text-3xl font-bold">Sign In</h2>
-    <label className="text-gray-700 text-sm font-bold flex-1">
-      Email
-      <input
-        type="email"
-        className="border rounded w-full py-1 px-2 font-normal"
-        {...register("email", { required: "This field is required" })}
-      ></input>
-      {errors.email && (
-        <span className="text-red-500">{errors.email.message}</span>
-      )}
-    </label>
-    <label className="text-gray-700 text-sm font-bold flex-1">
-      Password
-      <input
-        type="password"
-        className="border rounded w-full py-1 px-2 font-normal"
-        {...register("password", {
-          required: "This field is required",
-          minLength: {
-            value: 6,
-            message: "Password must be at least 6 characters",
-          },
-        })}
-      ></input>
-      {errors.password && (
-        <span className="text-red-500">{errors.password.message}</span>
-      )}
-    </label>
-    <span className="flex items-center justify-between">
-      <span className="text-sm">
-        Not Registered?{" "}
-        <Link className="underline" to="/register">
-          Create an account here
-        </Link>
-      </span>
-      <button
-        type="submit"
-        className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 text-xl"
-      >
-        Login
-      </button>
-    </span>
-  </form>
-  )
-  
 
+    <body className="h-screen flex items-center ">
+      <form className="max-w-md w-full mx-auto rounded-lg shadow-md p-8" onSubmit={onSubmit}>
+        <h2 className="font-bold text-[32px] mb-3"> Sign In</h2>
+        <div className="relative z-0 w-full mb-5 group">
+          <input
+            type="email"
+           
+           
+            className="block py-2 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-black dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            placeholder=" "
+            required
+            {...register("email", {required: "This field is required"})}
+          />
+          <label
+           
+            className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            {errors.email && (
+              <span className="text-red-500"> {errors.email.message}</span>
+            )}
+            Email address
+          </label>
+        </div>
+        <div className="relative z-0 w-full mb-5 group">
+          <input
+            type="password"
+            id="floating_password"
+            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-black dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            placeholder=" "
+            required
+            {...register("password", {
+              required: "This field is required",
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters",
+              },
+            })}
+          />
+          <label
+            htmlFor="floating_password"
+            className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            {errors.password && (
+              <span className="text-red-500"> {errors.password.message}</span>
+            )}
+            Password
+          </label>
+        </div>
+        <span>
+        <button
+          type="submit"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Submit
+        </button>
+        </span>
+        <div className="text-sm">
+          Not Registered?{" "}
+          <Link className="underline" to="/register">
+            Create an account here
+          </Link>
+        </div>
+      </form>
+    </body>
+  );
 };
 
- 
-
-
-export default Login
+export default Login;
