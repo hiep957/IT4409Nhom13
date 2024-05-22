@@ -18,7 +18,7 @@ const Header = () => {
           >
             Login
           </Link>
-          <Link to = "/register" className="flex bg-white items-center text-blue-600 px-3 font-bold hover:bg-gray-100"> Sigeenup </Link>
+          <Link to = "/register" className="flex bg-white items-center text-blue-600 px-3 font-bold hover:bg-gray-100"> Sigeenup22 </Link>
         </span>
       </div>
     </div>
