@@ -9,16 +9,28 @@ import {
 import Layout from './layouts/Layout';
 import Login from "./Pages/Login";
 import Register  from "./Pages/Register";
-
+import { useAppContext } from "./contexts/AppContext";
+import AddHotel from "./Pages/AddHotel";
 function App() {
   const [count, setCount] = useState(0);
-
+  const {isLoggedIn} = useAppContext();
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Layout children={undefined}></Layout>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/register" element={<Register/>}/>
+        {isLoggedIn && (
+          <>
+            <Route
+              path="/add-hotel"
+              element={
+                <Layout>
+                  <AddHotel />
+                </Layout>
+              }/> 
+          </>
+        )}
       </Routes>
     </Router>
   );

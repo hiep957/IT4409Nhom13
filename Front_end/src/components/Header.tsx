@@ -1,28 +1,24 @@
 import { Link } from "react-router-dom";
-// import { useAppContext } from "../contexts/AppContext";
-// import SignOutButton from "./SignOutButton";
+import { useAppContext } from "../contexts/AppContext";
+import SignOutButton from "./SignOutButton";
 
 const Header = () => {
-  //   const { isLoggedIn } = useAppContext();
-
+  const { isLoggedIn } = useAppContext();
+  console.log(isLoggedIn);
   return (
-    
-
-<nav className="bg-white dark:bg-gray-500 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
-  <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-  <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
-      <img src="https://flowbite.com/docs/images/logo.svg" className="h-8 me-3" alt="FlowBite Logo" />
-      <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
-  </a>
-  <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-      <span className="flex space-x-2">
+    <div className="bg-blue-800 py-6">
+      <div className="container mx-auto flex justify-between">
+        <span className="text-3xl text-white font-bold tracking-tight">
+          <Link to="/">SmartBooking.com</Link>
+        </span>
+        <span className="flex space-x-2">
           <Link
             to="/login"
-            className="flex text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="flex bg-white items-center text-blue-600 px-3 font-bold hover:bg-gray-100"
           >
             Login
           </Link>
-          <Link to = "/register" className="flex text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"> Signup </Link>
+          <Link to = "/register" className="flex bg-white items-center text-blue-600 px-3 font-bold hover:bg-gray-100"> Signup </Link>
         </span>
   </div>
   <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">

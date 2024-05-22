@@ -3,11 +3,17 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
 import UserRouter from "./routes/UsersRouter";
+import myHotelRoutes from "./routes/my-hotels"
 import mongoose, { ConnectOptions } from "mongoose";
-
+import { v2 as cloudinary } from "cloudinary";
 //Kết nối database
 const mongoUri = process.env.MONGO_URL;
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 if (!mongoUri) {
   throw new Error("Please define the MONGO_URI environment variable");
 }
@@ -37,6 +43,7 @@ const corsOptions: cors.CorsOptions = {
 app.use(cors(corsOptions));
 
 app.use("/user", UserRouter);
+app.use("/my-hotels",myHotelRoutes);
 app.get("/api/test", async (req: Request, res: Response) => {
   res.send("Hello World");
 });

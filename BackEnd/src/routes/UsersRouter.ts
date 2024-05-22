@@ -102,15 +102,13 @@ router.post(
     }
   }
 );
-router.get("/logout", Auth, (req: Request, res: Response) => {
-  try {
-    res.cookie("Auth_Token", { expires: new Date(0) });
-    res.status(200).json({ msg: " Logout successfully" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: " Logout failed" });
-  }
+router.post("/logout", (req: Request, res: Response) => {
+  res.cookie("Auth_Token", "", {
+    expires: new Date(0),
+  });
+  res.send();
 });
+
 router.get("/view_user", Auth, async (req: Request, res: Response) => {
   try {
     const ViewUser = await User.findById(req.userId).select("-password");
