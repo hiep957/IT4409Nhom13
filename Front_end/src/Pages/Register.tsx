@@ -122,11 +122,8 @@ const Register = () => {
   //       </button>
   //     </span>
   //   </form>
-  <body className="h-screen flex items-center ">
-  <form
-      className="max-w-md mx-auto bg-white rounded-lg shadow-md p-8 items-center  "
-      onSubmit={onSubmit}
-    >
+  <body className="h-screen flex justify-start items-center bg-cover bg-center" style={{ backgroundImage: "url('/image/Booking Hotel.png')" }}>
+  <form className="max-w-md w-full bg-white bg-opacity-85 rounded-lg shadow-md p-8 ml-28 " onSubmit={onSubmit}>
       <h2 className="text-3xl font-bold mb-5">Create an Account</h2>
       <div className="flex flex-col md:flex-row gap-5">
       <div className="relative z-0 w-full mb-5 group">
