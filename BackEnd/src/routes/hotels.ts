@@ -1,0 +1,13 @@
+import express, { Request, Response} from "express";
+import Hotel from "../models/HotelsModel";
+
+const router = express.Router();
+
+router.get("/search", async (req: Request, res: Response) => {
+
+        const pageSize = 5;
+        const pageNumber = parseInt(req.query.page ? req.query.page.toString() : "1"
+    );
+    const HotelsModel = await Hotel 
+
+})
