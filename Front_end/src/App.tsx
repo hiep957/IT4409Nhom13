@@ -11,6 +11,7 @@ import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import { useAppContext } from "./contexts/AppContext";
 import AddHotel from "./Pages/AddHotel";
+import InfoUser from "./Pages/InfoUser";
 function App() {
   const [count, setCount] = useState(0);
   const { isLoggedIn } = useAppContext();
@@ -27,6 +28,14 @@ function App() {
               element={
                 <Layout>
                   <AddHotel />
+                </Layout>
+              }
+            />
+            <Route
+              path="/setting/your-info"
+              element={
+                <Layout>
+                  <InfoUser />
                 </Layout>
               }
             />

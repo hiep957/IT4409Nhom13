@@ -3,6 +3,10 @@ export type UserType = {
     password: string;
     firstName: string;
     lastName: string;
+    gender: string;
+    date: string;
+    phone: string;
+    hometown: String;
   };
   
   export type HotelType = {
