@@ -1,28 +1,28 @@
 import { useFormContext } from "react-hook-form";
 import { HotelFormData } from "./AddHotelForm";
 
-
-
 const ImageSection = () => {
-    const {
-        register,
-        formState: { errors },
-        watch,
-        setValue,
-      } = useFormContext<HotelFormData>();
-      const existingImageUrls = watch("imageUrls");
-      const handleDelete = (
-        event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-        imageUrl: string
-      ) => {
-        event.preventDefault();
-        setValue(
-          "imageUrls",
-          existingImageUrls.filter((url) => url !== imageUrl)
-        );
-      };
-    return (
-        <div>
+  const {
+    register,
+    formState: { errors },
+    watch,
+    setValue,
+  } = useFormContext<HotelFormData>();
+
+  const existingImageUrls = watch("imageUrls");
+  
+  const handleDelete = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    imageUrl: string
+  ) => {
+    event.preventDefault();
+    setValue(
+      "imageUrls",
+      existingImageUrls.filter((url) => url !== imageUrl)
+    );
+  };
+  return (
+    <div>
       <h2 className="text-2xl font-bold mb-3">Images</h2>
       <div className="border rounded p-4 flex flex-col gap-4">
         {existingImageUrls && (
@@ -70,8 +70,7 @@ const ImageSection = () => {
         </span>
       )}
     </div>
-    )
-}
-
+  );
+};
 
 export default ImageSection;
