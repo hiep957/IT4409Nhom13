@@ -131,4 +131,27 @@ router.get("/validate-token", Auth, (req: Request, res: Response) => {
   }
 });
 
+router.put("/edit-info", Auth, async (req: Request, res: Response) => {
+  try {
+    const { firstName, lastName, email, phone, gender, hometown, date } = req.body;
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    user.firstName = firstName || user.firstName;
+    user.lastName = lastName || user.lastName;
+    user.email = email || user.email;
+    user.phone = phone || user.phone;
+    user.gender = gender || user.gender;
+    user.hometown = hometown || user.hometown;
+    user.date = date || user.date;
+    await user.save();
+    res.status(200).json({ msg: "User infor updated successfully." });
+  } catch (error) {
+    res.status(500).json({msg: "Error updating"})
+    
+  }
+})
 export default router;

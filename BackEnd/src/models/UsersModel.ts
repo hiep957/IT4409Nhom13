@@ -19,7 +19,29 @@ const userSchema = new mongoose.Schema({
     lastName: {
         type: String,
         required: true,
+    },
+    gender: {
+        type: String,
+        enum: ['Nam', 'Nữ', "Khác", " "],
+        default: " ",
+    
+    },
+    phone: {
+        type: Number,
+        default: ' '
+        
+    },
+    date: {
+        type: Date,
+        default: "01/01/2001"
+    },
+    hometown: {
+        type:String,
+        default: " "
     }
+    
+
+
 },{
     timestamps: true
 });
