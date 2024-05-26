@@ -14,6 +14,7 @@ import AddHotel from "./Pages/AddHotel";
 import InfoUser from "./Pages/InfoUser";
 import MyHotels from "./Pages/MyHotels";
 import EditHotel from "./Pages/EditHotel";
+import Search from "./Pages/Search";
 function App() {
   const [count, setCount] = useState(0);
   const { isLoggedIn } = useAppContext();
@@ -23,6 +24,8 @@ function App() {
         <Route path="/" element={<Layout children={undefined}></Layout>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/search" element= {<Layout><Search /></Layout>} />
+
         {isLoggedIn && (
           <>
             <Route
@@ -33,7 +36,7 @@ function App() {
                 </Layout>
               }
             />
-            <Route
+            {/* <Route
               path="/setting/your-info"
               element={
                 <Layout>
@@ -44,12 +47,21 @@ function App() {
                   <MyHotels />
                 </Layout>
               }
-            />
+            /> */}
+            
             <Route
               path="/edit-hotel/:hotelId"
               element={
                 <Layout>
                   <EditHotel />
+                </Layout>
+              }
+            />
+            <Route
+              path="/my-hotels"
+              element={
+                <Layout>
+                  <MyHotels />
                 </Layout>
               }
             />

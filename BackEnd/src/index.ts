@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import "dotenv/config";
 import UserRouter from "./routes/UsersRouter";
 import myHotelRoutes from "./routes/my-hotels"
+import hotelRoutes from "./routes/hotels";
 import mongoose, { ConnectOptions } from "mongoose";
 import { v2 as cloudinary } from "cloudinary";
 //Kết nối database
@@ -44,6 +45,7 @@ app.use(cors(corsOptions));
 
 app.use("/user", UserRouter);
 app.use("/my-hotels",myHotelRoutes);
+app.use("/api/hotels", hotelRoutes);
 app.get("/api/test", async (req: Request, res: Response) => {
   res.send("Hello World");
 });
