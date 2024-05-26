@@ -36,18 +36,24 @@ function App() {
                 </Layout>
               }
             />
-            {/* <Route
+            <Route
               path="/setting/your-info"
               element={
                 <Layout>
                   <InfoUser />
-              path="/my-hotels"
+                </Layout>}
+              />
+
+              <Route path="/my-hotels"
               element={
                 <Layout>
                   <MyHotels />
                 </Layout>
               }
-            /> */}
+              />
+
+      
+              
             
             <Route
               path="/edit-hotel/:hotelId"
