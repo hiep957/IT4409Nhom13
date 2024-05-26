@@ -1,4 +1,4 @@
-import { DiVim } from "react-icons/di";
+// import { DiVim } from "react-icons/di";
 import { useSearchContext } from "../contexts/SearchContext";
 import { useState } from "react";
 import { useQuery } from "react-query";
@@ -98,7 +98,7 @@ const Search = () => {
             {hotelData?.pagination.total} Hotels found
             {search.destination ? ` in ${search.destination}` : ""}
           </span>
-          {/* <select
+          { <select
             value={sortOption}
             onChange={(event) => setSortOption(event.target.value)}
             className="p-2 border rounded-md"
@@ -111,7 +111,7 @@ const Search = () => {
             <option value="pricePerNightDesc">
               Price Per Night (high to low)
             </option>
-          </select> */}
+          </select> }
         </div>
         {hotelData?.data.map((hotel) => (
           <SearchResultsCard hotel={hotel} />
