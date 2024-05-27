@@ -1,9 +1,9 @@
-import { useState } from "react";
+// import { useState } from "react";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
-  Navigate,
+
 } from "react-router-dom";
 
 import Layout from "./layouts/Layout";
@@ -16,7 +16,7 @@ import MyHotels from "./Pages/MyHotels";
 import EditHotel from "./Pages/EditHotel";
 import Search from "./Pages/Search";
 function App() {
-  const [count, setCount] = useState(0);
+  // const [count, setCount] = useState(0);
   const { isLoggedIn } = useAppContext();
   return (
     <Router>

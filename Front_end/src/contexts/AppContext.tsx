@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {loadStripe, Stripe} from "@stripe/stripe-js";
+
 import {useQuery} from "react-query";
 import Toast from "../components/Toast";
 import * as apiClient  from "../Api/ApiClient"

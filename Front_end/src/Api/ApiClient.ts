@@ -3,7 +3,7 @@ import { LoginForm } from "../Pages/Login"
 import { UserInfoForm } from "../Pages/InfoUser";
 import { HotelSearchResponse, HotelType } from "../../../BackEnd/src/shared/types";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || " ";
 
 export const validateToken = async () => {
   const response = await fetch(`${API_BASE_URL}/user/validate-token`, {

@@ -7,6 +7,7 @@ import myHotelRoutes from "./routes/my-hotels"
 import hotelRoutes from "./routes/hotels";
 import mongoose, { ConnectOptions } from "mongoose";
 import { v2 as cloudinary } from "cloudinary";
+import path from "path";
 //Kết nối database
 const mongoUri = process.env.MONGO_URL;
 
@@ -35,6 +36,8 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(__dirname,"../../Front_end/dist")));
 
 const corsOptions: cors.CorsOptions = {
   origin: "http://localhost:5173",
