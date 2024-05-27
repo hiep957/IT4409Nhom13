@@ -53,7 +53,7 @@ app.get("/api/test", async (req: Request, res: Response) => {
   res.send("Hello World");
 });
 app.get("*", (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
+  res.sendFile(path.join(__dirname, "../../Front_end/dist/index.html"));
 });
 app.listen(7000, () => {
   console.log("Server is running on port 7000");
