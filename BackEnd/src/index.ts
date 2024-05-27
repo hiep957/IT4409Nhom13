@@ -39,19 +39,19 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname,"../../Front_end/dist")));
 
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-//       const allowedOrigins = [process.env.FRONTEND_URL, "https://it4409nhom13.onrender.com", "http://localhost:5173"];
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error('Not allowed by CORS'));
-//       }
-//     },
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      const allowedOrigins = [process.env.FRONTEND_URL, "https://it4409nhom13.onrender.com", "http://localhost:5173"];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.use("/user", UserRouter);
 app.use("/my-hotels",myHotelRoutes);
