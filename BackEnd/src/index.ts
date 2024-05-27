@@ -41,7 +41,14 @@ app.use(express.static(path.join(__dirname,"../../Front_end/dist")));
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "https://it4409nhom13.onrender.com/",
+    origin: (origin, callback) => {
+      const allowedOrigins = [process.env.FRONTEND_URL, "https://it4409nhom13.onrender.com", "http://localhost:5173"];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
