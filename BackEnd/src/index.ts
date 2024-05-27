@@ -39,12 +39,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname,"../../Front_end/dist")));
 
-const corsOptions: cors.CorsOptions = {
-  origin: "http://localhost:5173",
-  credentials: true,
-};
+// const corsOptions: cors.CorsOptions = {
+//   origin: "http://localhost:5173",
+//   credentials: true,
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 app.use("/user", UserRouter);
 app.use("/my-hotels",myHotelRoutes);
