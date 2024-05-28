@@ -5,6 +5,7 @@ import "dotenv/config";
 import UserRouter from "./routes/UsersRouter";
 import myHotelRoutes from "./routes/my-hotels"
 import hotelRoutes from "./routes/hotels";
+import bookingRoutes from "./routes/my-bookings";
 import mongoose, { ConnectOptions } from "mongoose";
 import { v2 as cloudinary } from "cloudinary";
 import path from "path";
@@ -56,6 +57,7 @@ app.use(
 app.use("/user", UserRouter);
 app.use("/my-hotels",myHotelRoutes);
 app.use("/api/hotels", hotelRoutes);
+app.use("/api/my-bookings",bookingRoutes)
 app.get("/api/test", async (req: Request, res: Response) => {
   res.send("Hello World");
 });
