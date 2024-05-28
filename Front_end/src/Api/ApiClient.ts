@@ -5,6 +5,20 @@ import { HotelSearchResponse, HotelType } from "../../../BackEnd/src/shared/type
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
+export type SearchParams = {
+  destination?: string;
+  checkIn?: string;
+  checkOut?: string;
+  adultCount?: string;
+  childCount?: string;
+  page?: string;
+  facilities?: string[];
+  types?: string[];
+  stars?: string[];
+  maxPrice?: string;
+  sortOption?: string;
+};
+
 export const validateToken = async () => {
   const response = await fetch(`${API_BASE_URL}/user/validate-token`, {
     credentials: "include",
@@ -143,19 +157,7 @@ export const updateMyHotelById = async (hotelFormData: FormData) => {
 };
 
 
-export type SearchParams = {
-  destination?: string;
-  checkIn?: string;
-  checkOut?: string;
-  adultCount?: string;
-  childCount?: string;
-  page?: string;
-  facilities?: string[];
-  types?: string[];
-  stars?: string[];
-  maxPrice?: string;
-  sortOption?: string;
-};
+
 export const searchHotels = async (
   searchParams: SearchParams
 ): Promise<HotelSearchResponse> => {
