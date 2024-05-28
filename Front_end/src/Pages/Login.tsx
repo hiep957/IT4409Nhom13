@@ -38,8 +38,8 @@ const Login = () => {
 
   return (
 
-    <body className="h-screen flex items-center ">
-      <form className="max-w-md w-full mx-auto rounded-lg shadow-md p-8" onSubmit={onSubmit}>
+    <body className="h-screen flex justify-start items-center bg-cover bg-center" style={{ backgroundImage: "url('/image/Booking Hotel.png')" }}>
+      <form className="max-w-md w-full bg-white bg-opacity-85 rounded-lg shadow-md p-8 ml-28 " onSubmit={onSubmit}>
         <h2 className="font-bold text-[32px] mb-3"> Sign In</h2>
         <div className="relative z-0 w-full mb-5 group">
           <input

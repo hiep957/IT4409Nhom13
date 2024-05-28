@@ -4,8 +4,10 @@ import cookieParser from "cookie-parser";
 import "dotenv/config";
 import UserRouter from "./routes/UsersRouter";
 import myHotelRoutes from "./routes/my-hotels"
+import hotelRoutes from "./routes/hotels";
 import mongoose, { ConnectOptions } from "mongoose";
 import { v2 as cloudinary } from "cloudinary";
+import path from "path";
 //Kết nối database
 const mongoUri = process.env.MONGO_URL;
 
@@ -35,19 +37,31 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const corsOptions: cors.CorsOptions = {
-  origin: "http://localhost:5173",
-  credentials: true,
-};
+app.use(express.static(path.join(__dirname,"../../Front_end/dist")));
 
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      const allowedOrigins = [process.env.FRONTEND_URL, "https://it4409nhom13.onrender.com", "http://localhost:5173"];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.use("/user", UserRouter);
 app.use("/my-hotels",myHotelRoutes);
+app.use("/api/hotels", hotelRoutes);
 app.get("/api/test", async (req: Request, res: Response) => {
   res.send("Hello World");
 });
-
+app.get("*", (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, "../../Front_end/dist/index.html"));
+});
 app.listen(7000, () => {
   console.log("Server is running on port 7000");
 });
