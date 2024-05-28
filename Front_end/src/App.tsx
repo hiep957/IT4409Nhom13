@@ -1,10 +1,5 @@
 // import { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Layout from "./layouts/Layout";
 import Login from "./Pages/Login";
@@ -15,6 +10,8 @@ import InfoUser from "./Pages/InfoUser";
 import MyHotels from "./Pages/MyHotels";
 import EditHotel from "./Pages/EditHotel";
 import Search from "./Pages/Search";
+import Detail from "./Pages/Detail";
+import Booking from "./Pages/Booking";
 function App() {
   // const [count, setCount] = useState(0);
   const { isLoggedIn } = useAppContext();
@@ -24,10 +21,32 @@ function App() {
         <Route path="/" element={<Layout children={undefined}></Layout>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/search" element= {<Layout><Search /></Layout>} />
-
+        <Route
+          path="/search"
+          element={
+            <Layout>
+              <Search />
+            </Layout>
+          }
+        />
+        <Route
+          path="/detail/:hotelId"
+          element={
+            <Layout>
+              <Detail />
+            </Layout>
+          }
+        />
         {isLoggedIn && (
           <>
+            <Route
+              path="/hotel/:hotelId/booking"
+              element={
+                <Layout>
+                  <Booking />
+                </Layout>
+              }
+            />
             <Route
               path="/add-hotel"
               element={
@@ -41,20 +60,19 @@ function App() {
               element={
                 <Layout>
                   <InfoUser />
-                </Layout>}
-              />
+                </Layout>
+              }
+            />
 
-              <Route path="/my-hotels"
+            <Route
+              path="/my-hotels"
               element={
                 <Layout>
                   <MyHotels />
                 </Layout>
               }
-              />
+            />
 
-      
-              
-            
             <Route
               path="/edit-hotel/:hotelId"
               element={
@@ -72,7 +90,6 @@ function App() {
               }
             />
           </>
-          
         )}
       </Routes>
     </Router>

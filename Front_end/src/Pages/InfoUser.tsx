@@ -5,7 +5,9 @@ import { useAppContext } from '../contexts/AppContext';
 import { useMutation } from 'react-query';
 
 export type UserInfoForm = {
+  _id: string;
   firstName: string;
+  email: string;  
   lastName: string;
   gender: string;
   date: string;

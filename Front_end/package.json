@@ -10,7 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@stripe/stripe-js": "^3.3.0",
+    "@stripe/react-stripe-js": "^2.7.1",
+    "@stripe/stripe-js": "^3.4.1",
     "@types/react-query": "^1.2.9",
     "react": "^18.2.0",
     "react-datepicker": "^6.9.0",
