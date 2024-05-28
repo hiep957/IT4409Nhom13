@@ -24,7 +24,7 @@ const Booking = () => {
     }
   }, [search.checkIn, search.checkOut]);
 
-  const { data: paymentIntentData } = useQuery(
+  const { isLoading:isPaymentLoading, data: paymentIntentData,error: paymentError  } = useQuery(
     "createPaymentIntent",
     () =>
       ApiClient.createPaymentIntent(
@@ -36,19 +36,30 @@ const Booking = () => {
     }
   );
 
-  const { data: hotel } = useQuery(
+  const { isLoading: isHotelLoading, data: hotel,error:hotelError } = useQuery(
     "fetchHotelByID",
     () => ApiClient.fetchHotelById(hotelId as string),
     {
       enabled: !!hotelId,
     }
   );
+  
+
+  
+  const {isLoading: isUserLoading, data: currentUser,error: userError } = useQuery("viewInfo", ApiClient.viewInfo);
+  console.log(currentUser, paymentIntentData);
+  if (isHotelLoading || isPaymentLoading || isUserLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (hotelError || paymentError || userError) {
+    return <div>Error loading data</div>;
+  }
 
   if (!hotel) {
-    return <></>;
+    return <div>No hotel data found</div>;
   }
-  const { data: currentUser } = useQuery("viewInfo", ApiClient.viewInfo);
-  console.log(currentUser, paymentIntentData);
+
   return (
     <div className="grid md:grid-cols-[1fr_2fr]">
       <BookingDetailsSummary
