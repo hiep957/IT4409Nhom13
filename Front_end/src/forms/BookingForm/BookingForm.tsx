@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { UserInfoForm } from "../../Pages/InfoUser";
 import { useForm } from "react-hook-form";
 import { useSearchContext } from "../../contexts/SearchContext";
-import { useEffect, useState } from "react";
+
 import { PaymentIntentResponse } from "../../../../BackEnd/src/shared/types";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElement } from "@stripe/stripe-js";
