@@ -185,4 +185,3 @@ export const searchHotels = async (
 
   return response.json();
 };
-
