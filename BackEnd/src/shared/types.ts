@@ -7,6 +7,7 @@ export type UserType = {
     date: string;
     phone: string;
     hometown: String;
+    role: string;
   };
   
   export type HotelType = {

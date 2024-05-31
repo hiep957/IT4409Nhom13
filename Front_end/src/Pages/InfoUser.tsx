@@ -13,6 +13,7 @@ export type UserInfoForm = {
   date: string;
   phone: string;
   hometown: string;
+  role: string;
 };
 
 const InfoUser = () => {

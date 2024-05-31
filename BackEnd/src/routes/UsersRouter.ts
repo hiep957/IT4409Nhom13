@@ -16,6 +16,7 @@ router.post(
     check("password", "Password with 6 or more characters required").isLength({
       min: 6,
     }),
+    check("role", "Role is required").isString(),
   ],
   async (req: Request, res: Response) => {
     const error = validationResult(req);
@@ -34,6 +35,7 @@ router.post(
         lastName: req.body.lastName,
         email: req.body.email,
         password: hashedPassword,
+        role: req.body.role,
       });
       await user.save();
 

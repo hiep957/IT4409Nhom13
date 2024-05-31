@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import Hotel from "../models/HotelsModel";
-import { BookingType, HotelSearchResponse } from "../shared/types";
+import { BookingType, HotelSearchResponse, HotelType } from "../shared/types";
 import { param, validationResult } from "express-validator";
 import Stripe from "stripe";
 import verifyToken from "../middleware/auth";
@@ -236,3 +236,5 @@ router.post(
   }
 );
 export default router;
+
+
