@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
 import SignOutButton from "./SignOutButton";
-import { IoIosNotifications } from "react-icons/io";
+
 const Header = () => {
   const { isLoggedIn, role } = useAppContext();
   console.log(isLoggedIn);
