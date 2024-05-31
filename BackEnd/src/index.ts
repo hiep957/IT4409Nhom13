@@ -43,7 +43,7 @@ app.use(express.static(path.join(__dirname,"../../Front_end/dist")));
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowedOrigins = [process.env.FRONTEND_URL, "https://it4409nhom13.onrender.com", "http://localhost:5173"];
+      const allowedOrigins = [process.env.FRONTEND_URL, "https://it4409nhom13.onrender.com", "http://localhost:5173", "http://localhost:5174"];
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -58,6 +58,7 @@ app.use("/user", UserRouter);
 app.use("/my-hotels",myHotelRoutes);
 app.use("/api/hotels", hotelRoutes);
 app.use("/api/my-bookings",bookingRoutes)
+
 app.get("/api/test", async (req: Request, res: Response) => {
   res.send("Hello World");
 });

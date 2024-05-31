@@ -12,13 +12,16 @@ import EditHotel from "./Pages/EditHotel";
 import Search from "./Pages/Search";
 import Detail from "./Pages/Detail";
 import Booking from "./Pages/Booking";
+import MyBookings from "./Pages/MyBookings";
+import Home from "./Pages/Home";
+
 function App() {
   // const [count, setCount] = useState(0);
-  const { isLoggedIn } = useAppContext();
+  const { isLoggedIn, role } = useAppContext();
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Layout children={undefined}></Layout>} />
+        <Route path="/" element={<Layout><Home/></Layout>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
@@ -47,14 +50,7 @@ function App() {
                 </Layout>
               }
             />
-            <Route
-              path="/add-hotel"
-              element={
-                <Layout>
-                  <AddHotel />
-                </Layout>
-              }
-            />
+
             <Route
               path="/setting/your-info"
               element={
@@ -65,14 +61,26 @@ function App() {
             />
 
             <Route
-              path="/my-hotels"
+              path="/my-bookings"
               element={
                 <Layout>
-                  <MyHotels />
+                  <MyBookings />
                 </Layout>
               }
             />
+          </>
+        )}
 
+        {role === "Admin" && isLoggedIn && (
+          <>
+            <Route
+              path="/add-hotel"
+              element={
+                <Layout>
+                  <AddHotel />
+                </Layout>
+              }
+            />
             <Route
               path="/edit-hotel/:hotelId"
               element={

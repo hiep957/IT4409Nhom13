@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 
 import {useQuery} from "react-query";
 import Toast from "../components/Toast";
-import * as apiClient  from "../Api/ApiClient"
+import * as ApiClient  from "../Api/ApiClient"
 import { Stripe, loadStripe } from '@stripe/stripe-js';
 
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_PUB_KEY || "";
@@ -16,6 +16,7 @@ type AppContext = {
     showToast: (toastMessage: ToastMes) => void,
     isLoggedIn: boolean;
     stripePromise: Promise<Stripe | null>;
+    role: string;
 };
 
 const AppContext = React.createContext<AppContext | undefined> (undefined);
@@ -33,10 +34,11 @@ export const  AppContextProvider = ({
 }) => {
   const [toast, setToast ] = useState<ToastMes | undefined> (undefined);
 
-  const { isError} = useQuery("validateToken", apiClient.validateToken, {
+  const { isError} = useQuery("validateToken", ApiClient.validateToken, {
     retry: false,
   });
-
+  const {data: user} = useQuery("viewInfo", ApiClient.viewInfo);
+  console.log(user);
   return (
     <AppContext.Provider value = {{
       showToast : (ToastMes) => {
@@ -44,6 +46,7 @@ export const  AppContextProvider = ({
       },
       isLoggedIn: !isError,
       stripePromise,
+      role: user?.role || "",
     }}>
       {toast && (
         <Toast 

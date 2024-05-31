@@ -38,6 +38,10 @@ const userSchema = new mongoose.Schema({
     hometown: {
         type:String,
         default: " "
+    },
+    role: {
+        type: String,
+        required: true,
     }
     
 
