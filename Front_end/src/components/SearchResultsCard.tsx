@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { HotelType } from "../../../BackEnd/src/shared/types";
 import { AiFillStar } from "react-icons/ai";
+
 type Props = {
   hotel: HotelType;
 };
@@ -13,7 +14,10 @@ const SearchResultsCard = ({ hotel }: Props) => {
           src={hotel.imageUrls[0]}
           className="w-full h-full object-cover object-center"
         />
-      </div>
+      </div>  
+
+
+
       <div className="grid grid-rows-[1fr_2fr_1fr]">
         <div>
           <div className="flex items-center">
@@ -35,6 +39,8 @@ const SearchResultsCard = ({ hotel }: Props) => {
         <div>
           <div className="line-clamp-4">{hotel.description}</div>
         </div>
+
+
 
         <div className="grid grid-cols-2 items-end whitespace-nowrap">
           <div className="flex gap-1 items-center">
