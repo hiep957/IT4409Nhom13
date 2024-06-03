@@ -4,6 +4,8 @@ import { BookingType, HotelSearchResponse, HotelType } from "../shared/types";
 import { param, validationResult } from "express-validator";
 import Stripe from "stripe";
 import verifyToken from "../middleware/auth";
+import nodemailer from "nodemailer";
+import User from "../models/UsersModel";
 const router = express.Router();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
@@ -183,6 +185,16 @@ router.post(
   }
 );
 
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // Use `true` for port 465, `false` for all other ports
+  auth: {
+    user: "hiepma80@gmail.com",
+    pass: "nlnz rrph qdsp bcdb"
+  },
+});
+
 router.post(
   "/:hotelId/bookings",
   verifyToken,
@@ -223,11 +235,32 @@ router.post(
         }
       );
 
+      const user = await User.findById(req.userId);
+      if(!user) {
+        return res.status(400).json({ message: "user not found" });
+      }
       if (!hotel) {
         return res.status(400).json({ message: "hotel not found" });
       }
 
       await hotel.save();
+      const mailOptions = {
+        from: 'hiepma80@gmail.com',
+        to: user.email, // Địa chỉ email người dùng
+        subject: 'Booking Confirmation',
+        text: `Dear , your booking at ${hotel.name} has been confirmed. Thank you for your payment!`,
+        // Bạn cũng có thể sử dụng HTML:
+        // html: `<p>Dear user, your booking at ${hotel.name} has been confirmed. Thank you for your payment!</p>`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error('Error sending email:', error);
+          return res.status(500).json({ message: "Failed to send confirmation email" });
+        }
+        console.log('Email sent:', info.response);
+        res.status(200).send();
+      });
       res.status(200).send();
     } catch (error) {
       console.log(error);

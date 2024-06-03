@@ -39,8 +39,8 @@ function App() {
               <Detail />
             </Layout>
           }
-        />
-        {isLoggedIn && (
+        /> 
+        {isLoggedIn && role === "User"&& (
           <>
             <Route
               path="/hotel/:hotelId/booking"

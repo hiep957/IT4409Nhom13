@@ -95,7 +95,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
                 selected={checkOut}
                 onChange={(date) => setValue("checkOut", date as Date)}
                 selectsStart
-                startDate={checkIn}
+                startDate={new Date(checkIn.getTime() + 1)}
                 endDate={checkOut}
                 minDate={minDate}
                 maxDate={maxDate}

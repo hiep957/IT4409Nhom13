@@ -3,9 +3,10 @@ import { useParams } from "react-router-dom";
 import * as ApiClient from "../Api/ApiClient";
 import { AiFillStar } from "react-icons/ai";
 import GuestInfoForm from "../forms/GuestFormInfo/GuestFormInfo";
+import { useAppContext } from "../contexts/AppContext";
 const Detail = () => {
   const { hotelId } = useParams();
-
+  const { role } = useAppContext();
   const { data: hotel } = useQuery(
     "fetchHotelById",
     () => ApiClient.fetchHotelById(hotelId || ""),
@@ -50,15 +51,18 @@ const Detail = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr]">
         <div className="whitespace-pre-line">{hotel.description}</div>
-        <div className="h-fit">
-          <GuestInfoForm
-            pricePerNight={hotel.pricePerNight}
-            hotelId={hotel._id}
-          />
-        </div>
+        {role === "Admin" ? (
+          <></>
+        ) : (
+          <div className="h-fit">
+            <GuestInfoForm
+              pricePerNight={hotel.pricePerNight}
+              hotelId={hotel._id}
+            />
+          </div>
+        )}
       </div>
     </div>
-    
   );
 };
 

@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
 import SignOutButton from "./SignOutButton";
-
+import { useQuery } from "react-query";
+import * as ApiClient from "../Api/ApiClient";
 const Header = () => {
   const { isLoggedIn, role } = useAppContext();
   console.log(isLoggedIn);
+  const {data: user} = useQuery("viewInfo", ApiClient.viewInfo);
   return (
     <nav className="bg-white dark:bg-gray-500 w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -47,7 +49,8 @@ const Header = () => {
                 )}
               </ul>
             </div>
-            <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+            <div className="flex md:order-2  space-x-3 md:space-x-0 rtl:space-x-reverse">
+              <div className="p-2 text-gray-900">Xin chào, {user?.firstName}</div>
               <SignOutButton />
             </div>
           </>

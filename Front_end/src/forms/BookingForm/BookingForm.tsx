@@ -27,7 +27,7 @@ export type BookingFormData = {
   totalCost: number;
 };
 
-const BookingForm = ({ currentUser, paymentIntent }: Props) => {
+const  BookingForm = ({ currentUser, paymentIntent }: Props) => {
   const stripe = useStripe();
   const elements = useElements();
   const search = useSearchContext();
