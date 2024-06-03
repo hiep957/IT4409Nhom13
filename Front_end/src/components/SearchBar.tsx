@@ -76,8 +76,9 @@ const SearchBar = () => {
               onChange={(event) => setChildCount(parseInt(event.target.value))}
             />
           </label>
-          
+
         </div>
+        
         <div>
           <DatePicker
             selected={checkIn}
@@ -92,6 +93,7 @@ const SearchBar = () => {
             wrapperClassName="min-w-full"
           />
         </div>
+        
         <div>
           <DatePicker
             selected={checkOut}
@@ -106,6 +108,7 @@ const SearchBar = () => {
             wrapperClassName="min-w-full"
           />
         </div>
+        
         <div className="flex gap-1">
           <button className="w-2/3 bg-blue-600 text-white h-full p-2 font-bold text-xl hover:bg-blue-500">
             Search
