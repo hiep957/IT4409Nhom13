@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
-        enum: ['Nam', 'Nữ', "Khác", " "],
         default: " ",
     
     },
@@ -37,11 +36,11 @@ const userSchema = new mongoose.Schema({
     },
     hometown: {
         type:String,
-        default: " "
+        default: " ",
     },
     role: {
         type: String,
-        required: true,
+        
     }
     
 

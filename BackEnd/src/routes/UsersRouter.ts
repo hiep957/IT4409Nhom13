@@ -152,7 +152,7 @@ router.put("/edit-info", Auth, async (req: Request, res: Response) => {
     await user.save();
     res.status(200).json({ msg: "User infor updated successfully." });
   } catch (error) {
-    res.status(500).json({msg: "Error updating"})
+    res.status(500).json({msg: (error as Error).message});
     
   }
 })
