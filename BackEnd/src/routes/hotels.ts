@@ -248,7 +248,7 @@ router.post(
         from: 'hiepma80@gmail.com',
         to: user.email, // Địa chỉ email người dùng
         subject: 'Booking Confirmation',
-        text: `Dear , your booking at ${hotel.name} has been confirmed. Thank you for your payment!`,
+        text: `Dear , your booking at ${hotel.name} has been confirmed.Thank you for your payment!`,
         // Bạn cũng có thể sử dụng HTML:
         // html: `<p>Dear user, your booking at ${hotel.name} has been confirmed. Thank you for your payment!</p>`,
       };
