@@ -40,7 +40,7 @@ function App() {
             </Layout>
           }
         /> 
-        {isLoggedIn && role === "User"&& (
+        {isLoggedIn && role === "User"||"user" && (
           <>
             <Route
               path="/hotel/:hotelId/booking"
