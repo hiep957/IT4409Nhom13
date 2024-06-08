@@ -165,7 +165,12 @@ router.put("/edit-info", Auth, async (req: Request, res: Response) => {
     await user.save();
     res.status(200).json({ msg: "User infor updated successfully." });
   } catch (error) {
+<<<<<<< HEAD
     res.status(500).json({ msg: "Error updating" });
+=======
+    res.status(500).json({msg: (error as Error).message});
+    
+>>>>>>> c7d5371eb279dbe7e82a48280289f806a1ed8165
   }
 });
 export default router;
