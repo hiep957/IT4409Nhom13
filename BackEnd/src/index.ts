@@ -9,6 +9,7 @@ import bookingRoutes from "./routes/my-bookings";
 import mongoose, { ConnectOptions } from "mongoose";
 import { v2 as cloudinary } from "cloudinary";
 import path from "path";
+import { errorHandlingMiddleware } from "./middleware/errorHandlingMiddleware";
 //Kết nối database
 const mongoUri = process.env.MONGO_URL;
 
@@ -34,6 +35,9 @@ mongoose
   });
 
 const app = express();
+
+// Middleware central error handling
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -65,6 +69,7 @@ app.get("/api/test", async (req: Request, res: Response) => {
 app.get("*", (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../../Front_end/dist/index.html"));
 });
+app.use(errorHandlingMiddleware);
 app.listen(7000, () => {
   console.log("Server is running on port 7000");
 });

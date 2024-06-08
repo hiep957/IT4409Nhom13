@@ -1,9 +1,10 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Auth from "../middleware/auth";
 import User from "../models/UsersModel";
 import { check, validationResult } from "express-validator";
+import ApiError from "../utils/ApiError";
 
 const router = express.Router();
 
@@ -18,15 +19,21 @@ router.post(
     }),
     check("role", "Role is required").isString(),
   ],
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
-      return res.status(400).json({ message: error.array() });
+      throw new ApiError(
+        400,
+        error
+          .array()
+          .map((error) => error.msg)
+          .join(", ")
+      );
     }
     try {
       let user = await User.findOne({ email: req.body.email });
       if (user) {
-        return res.status(400).json({ message: "User already exists" });
+        throw new ApiError(400, "User already exists");
       }
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
@@ -53,8 +60,7 @@ router.post(
 
       return res.status(200).send({ message: "User registered successfully" });
     } catch (error) {
-      console.log(error);
-      res.status(500).send({ message: "Something went wrong" });
+      next(error);
     }
   }
 );
@@ -66,10 +72,17 @@ router.post(
       min: 6,
     }),
   ],
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
-      return res.status(400).json({ message: error.array() });
+      // return res.status(400).json({ message: error.array() });
+      throw new ApiError(
+        400,
+        error
+          .array()
+          .map((error) => error.msg)
+          .join(", ")
+      );
     }
 
     const { email, password } = req.body;
@@ -77,12 +90,12 @@ router.post(
     try {
       const user = await User.findOne({ email });
       if (!user) {
-        return res.status(400).json({ message: "User not found" });
+        throw new ApiError(400, "User not found");
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(400).json({ message: "Password mismatch" });
+        throw new ApiError(400, "Password mismatch");
       }
 
       const token = jwt.sign(
@@ -99,8 +112,7 @@ router.post(
 
       res.status(200).json({ userId: user._id, token: token });
     } catch (err) {
-      console.log(err);
-      res.status(500).json({ msg: "Something went wrong" });
+      next(err);
     }
   }
 );
@@ -135,7 +147,8 @@ router.get("/validate-token", Auth, (req: Request, res: Response) => {
 
 router.put("/edit-info", Auth, async (req: Request, res: Response) => {
   try {
-    const { firstName, lastName, email, phone, gender, hometown, date } = req.body;
+    const { firstName, lastName, email, phone, gender, hometown, date } =
+      req.body;
     const user = await User.findById(req.userId);
 
     if (!user) {
@@ -152,8 +165,7 @@ router.put("/edit-info", Auth, async (req: Request, res: Response) => {
     await user.save();
     res.status(200).json({ msg: "User infor updated successfully." });
   } catch (error) {
-    res.status(500).json({msg: "Error updating"})
-    
+    res.status(500).json({ msg: "Error updating" });
   }
-})
+});
 export default router;
