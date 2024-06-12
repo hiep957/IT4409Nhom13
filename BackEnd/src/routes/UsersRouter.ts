@@ -4,8 +4,9 @@ import jwt from "jsonwebtoken";
 import Auth from "../middleware/auth";
 import User from "../models/UsersModel";
 import { check, validationResult } from "express-validator";
-import ApiError from "../utils/ApiError";
-
+// import ApiError from "../utils/ApiError";
+import asyncHandler from "../utils/asyncHandler";
+import { BadRequestError } from "../utils/ApiError";
 const router = express.Router();
 
 router.post(
@@ -19,50 +20,46 @@ router.post(
     }),
     check("role", "Role is required").isString(),
   ],
-  async (req: Request, res: Response, next: NextFunction) => {
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
-      throw new ApiError(
-        400,
+      throw new BadRequestError(
         error
           .array()
           .map((error) => error.msg)
           .join(", ")
       );
     }
-    try {
-      let user = await User.findOne({ email: req.body.email });
-      if (user) {
-        throw new ApiError(400, "User already exists");
-      }
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-      user = new User({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: hashedPassword,
-        role: req.body.role,
-      });
-      await user.save();
-
-      const token = jwt.sign(
-        { userId: user.id },
-        process.env.JWT_SECRET_KEY as string,
-        { expiresIn: "2h" }
-      );
-
-      res.cookie("Auth_Token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 86400000,
-      });
-
-      return res.status(200).send({ message: "User registered successfully" });
-    } catch (error) {
-      next(error);
+    let user = await User.findOne({ email: req.body.email });
+    if (user) {
+      throw new BadRequestError("User already exists");
     }
-  }
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    user = new User({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      password: hashedPassword,
+      role: req.body.role,
+    });
+    await user.save();
+
+    const token = jwt.sign(
+      { userId: user.id },
+      process.env.JWT_SECRET_KEY as string,
+      { expiresIn: "2h" }
+    );
+
+    res.cookie("Auth_Token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 86400000,
+    });
+
+    return res.status(200).send({ message: "User registered successfully" });
+  })
 );
 router.post(
   "/login",
@@ -72,12 +69,11 @@ router.post(
       min: 6,
     }),
   ],
-  async (req: Request, res: Response, next: NextFunction) => {
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
       // return res.status(400).json({ message: error.array() });
-      throw new ApiError(
-        400,
+      throw new BadRequestError(
         error
           .array()
           .map((error) => error.msg)
@@ -87,34 +83,30 @@ router.post(
 
     const { email, password } = req.body;
 
-    try {
-      const user = await User.findOne({ email });
-      if (!user) {
-        throw new ApiError(400, "User not found");
-      }
-
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        throw new ApiError(400, "Password mismatch");
-      }
-
-      const token = jwt.sign(
-        { userId: user.id },
-        process.env.JWT_SECRET_KEY as string,
-        { expiresIn: "2h" }
-      );
-
-      res.cookie("Auth_Token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 86400000,
-      });
-
-      res.status(200).json({ userId: user._id, token: token });
-    } catch (err) {
-      next(err);
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new BadRequestError("User not found");
     }
-  }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new BadRequestError("Password mismatch");
+    }
+
+    const token = jwt.sign(
+      { userId: user.id },
+      process.env.JWT_SECRET_KEY as string,
+      { expiresIn: "2h" }
+    );
+
+    res.cookie("Auth_Token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 86400000,
+    });
+
+    res.status(200).json({ userId: user._id, token: token });
+  })
 );
 router.post("/logout", (req: Request, res: Response) => {
   res.cookie("Auth_Token", "", {
@@ -123,18 +115,17 @@ router.post("/logout", (req: Request, res: Response) => {
   res.send();
 });
 
-router.get("/view_user", Auth, async (req: Request, res: Response) => {
-  try {
+router.get(
+  "/view_user",
+  Auth,
+  asyncHandler(async (req: Request, res: Response) => {
     const ViewUser = await User.findById(req.userId).select("-password");
     if (!ViewUser) {
-      return res.status(400).json({ msg: "User not found" });
+      throw new BadRequestError("User not found");
     }
     res.json(ViewUser);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "Something went wrong" });
-  }
-});
+  })
+);
 router.get("/validate-token", Auth, (req: Request, res: Response) => {
   try {
     console.log("checkvalidate");
@@ -145,14 +136,16 @@ router.get("/validate-token", Auth, (req: Request, res: Response) => {
   }
 });
 
-router.put("/edit-info", Auth, async (req: Request, res: Response) => {
-  try {
+router.put(
+  "/edit-info",
+  Auth,
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { firstName, lastName, email, phone, gender, hometown, date } =
       req.body;
     const user = await User.findById(req.userId);
 
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      throw new BadRequestError("User not found");
     }
 
     user.firstName = firstName || user.firstName;
@@ -164,13 +157,6 @@ router.put("/edit-info", Auth, async (req: Request, res: Response) => {
     user.date = date || user.date;
     await user.save();
     res.status(200).json({ msg: "User infor updated successfully." });
-  } catch (error) {
-<<<<<<< HEAD
-    res.status(500).json({ msg: "Error updating" });
-=======
-    res.status(500).json({msg: (error as Error).message});
-    
->>>>>>> c7d5371eb279dbe7e82a48280289f806a1ed8165
-  }
-});
+  })
+);
 export default router;
