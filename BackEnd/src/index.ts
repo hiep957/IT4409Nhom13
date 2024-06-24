@@ -10,6 +10,8 @@ import mongoose, { ConnectOptions } from "mongoose";
 import { v2 as cloudinary } from "cloudinary";
 import path from "path";
 import { errorHandlingMiddleware } from "./middleware/errorHandlingMiddleware";
+import Redis from "ioredis";
+const redis = new Redis();
 //Kết nối database
 const mongoUri = process.env.MONGO_URL;
 
@@ -57,8 +59,20 @@ app.use(
     credentials: true,
   })
 );
+// app.get('/cache', async (req, res) => {
+//   const cachedData = await redis.get('cachedData');
 
-app.use("/user", UserRouter);
+//   if (cachedData) {
+//     // If data exists in the cache, return it
+//     res.send(JSON.parse(cachedData));
+//   } else {
+//     // If data is not in the cache, fetch it from the source
+//     const dataToCache = { message: 'Data to be cached' };
+//     await redis.set('cachedData', JSON.stringify(dataToCache), 'EX', 3600); // Cache for 1 hour
+//     res.send(dataToCache);
+//   }
+// });
+app.use("/api/user", UserRouter);
 app.use("/my-hotels",myHotelRoutes);
 app.use("/api/hotels", hotelRoutes);
 app.use("/api/my-bookings",bookingRoutes)

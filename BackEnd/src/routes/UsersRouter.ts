@@ -7,6 +7,8 @@ import { check, validationResult } from "express-validator";
 // import ApiError from "../utils/ApiError";
 import asyncHandler from "../utils/asyncHandler";
 import { BadRequestError } from "../utils/ApiError";
+import Redis from "ioredis";
+const redis = new Redis();
 const router = express.Router();
 
 router.post(
@@ -46,6 +48,15 @@ router.post(
     });
     await user.save();
 
+    const { password, ...userObj } = user.toObject();
+
+    //Chèn thêm thông tin người dùng vào redis theo key value
+    await redis.set(
+      `${user._id}`,
+      JSON.stringify(userObj),
+      "EX",
+      3600 * 24 * 3
+    );
     const token = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET_KEY as string,
@@ -119,11 +130,41 @@ router.get(
   "/view_user",
   Auth,
   asyncHandler(async (req: Request, res: Response) => {
-    const ViewUser = await User.findById(req.userId).select("-password");
-    if (!ViewUser) {
-      throw new BadRequestError("User not found");
+    //lấy data từ redis nếu không có thì lấy từ database rồi lại set vào redis
+    let userData = await redis.get(`${req.userId}`);
+
+    if (!userData) {
+      const ViewUser = await User.findById(req.userId).select("-password");
+      if (!ViewUser) {
+        throw new BadRequestError("User not found");
+      }
+      await redis.set(
+        `${req.userId}`,
+        JSON.stringify(ViewUser),
+        "EX",
+        3600 * 24 * 3
+      );
+      userData = JSON.stringify(ViewUser);
     }
-    res.json(ViewUser);
+
+    res.json(JSON.parse(userData));
+  })
+);
+
+router.get(
+  "/users",
+  asyncHandler(async (req: Request, res: Response) => {
+    // Check if list of users is cached
+    const page = parseInt(req.body.page as string) || 1;
+    const limit = parseInt(req.body.limit as string) || 3;
+    const skip = (page - 1) * limit;
+    const users = await User.find().select("-password").skip(skip).limit(limit);
+    res.status(200).json({
+      message: "Lấy dữ liệu thành công",
+      page: page,
+      limit: limit,
+      user: users,
+    });
   })
 );
 router.get("/validate-token", Auth, (req: Request, res: Response) => {
@@ -142,12 +183,17 @@ router.put(
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { firstName, lastName, email, phone, gender, hometown, date } =
       req.body;
-    const user = await User.findById(req.userId);
-
-    if (!user) {
-      throw new BadRequestError("User not found");
+    //lay data tu redis
+    let userData = await redis.get(`${req.userId}`);
+    let user;
+    if (userData) {
+      user = JSON.parse(userData);
+    } else {
+      user = await User.findById(req.userId);
+      if (!user) {
+        throw new BadRequestError("User not found");
+      }
     }
-
     user.firstName = firstName || user.firstName;
     user.lastName = lastName || user.lastName;
     user.email = email || user.email;
@@ -155,8 +201,24 @@ router.put(
     user.gender = gender || user.gender;
     user.hometown = hometown || user.hometown;
     user.date = date || user.date;
-    await user.save();
-    res.status(200).json({ msg: "User infor updated successfully." });
+
+    await redis.set(`${req.userId}`, JSON.stringify(user), "EX", 3600 * 24 * 3);
+    await User.findByIdAndUpdate(req.userId, user);
+    res.status(200).send({ message: "User updated successfully" });
   })
 );
+
+router.delete(
+  "/delete-user/:userId",
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = req.params;
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) {
+      throw new BadRequestError("User not found");
+    }
+    await redis.del(`${userId}`);
+    res.status(200).send({ message: "User deleted successfully" });
+  })
+);
+
 export default router;
