@@ -3,7 +3,7 @@ import Hotel from "../models/HotelsModel";
 import { BookingType, HotelSearchResponse, HotelType } from "../shared/types";
 import { param, validationResult } from "express-validator";
 import Stripe from "stripe";
-import verifyToken from "../middleware/auth";
+import {verifyToken} from "../middleware/auth";
 import nodemailer from "nodemailer";
 import User from "../models/UsersModel";
 const router = express.Router();

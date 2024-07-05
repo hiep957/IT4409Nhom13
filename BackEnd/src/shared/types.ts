@@ -8,6 +8,9 @@ export type UserType = {
     phone: string;
     hometown: String;
     role: string;
+    isDeleted: boolean;
+    fullName: string;
+    id: string;
   };
   
   export type HotelType = {

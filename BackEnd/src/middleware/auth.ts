@@ -4,10 +4,11 @@ declare global {
   namespace Express {
     interface Request {
       userId: string;
+      role: string;
     }
   }
 }
-const verifyToken = (req: Request, res: Response, next: NextFunction) => {
+export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   
   const token = req.cookies['Auth_Token'];
   if (!token) {
@@ -17,8 +18,9 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     console.log(token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY as string);
     req.userId = (decoded as JwtPayload).userId;
-    console.log(decoded)
+    req.role = (decoded as JwtPayload).role;
     console.log(req.userId);
+    console.log(req.role);
     next();
   } catch (err) {
     if (typeof err === "string") {
@@ -31,4 +33,14 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
 
 };
 
-export default verifyToken;
+export const verifyTokenAndAdmin = (req: Request, res: Response, next: NextFunction) => {
+  verifyToken(req, res, () => {
+    if (req.role === "admin") {
+      next();
+    } else {
+      res.status(403).json({ message: "You're not allowed to do that" });
+    }
+  })
+}
+
+

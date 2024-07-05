@@ -1,13 +1,15 @@
 import express, { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import Auth from "../middleware/auth";
+import { verifyToken, verifyTokenAndAdmin } from "../middleware/auth";
 import User from "../models/UsersModel";
 import { check, validationResult } from "express-validator";
 // import ApiError from "../utils/ApiError";
 import asyncHandler from "../utils/asyncHandler";
 import { BadRequestError } from "../utils/ApiError";
 import Redis from "ioredis";
+import removeDiacritics from 'diacritics';
+import { create } from "domain";
 const redis = new Redis();
 const router = express.Router();
 
@@ -105,7 +107,7 @@ router.post(
     }
 
     const token = jwt.sign(
-      { userId: user.id },
+      { userId: user.id, role: user.role },
       process.env.JWT_SECRET_KEY as string,
       { expiresIn: "2h" }
     );
@@ -119,6 +121,7 @@ router.post(
     res.status(200).json({ userId: user._id, token: token });
   })
 );
+
 router.post("/logout", (req: Request, res: Response) => {
   res.cookie("Auth_Token", "", {
     expires: new Date(0),
@@ -127,38 +130,63 @@ router.post("/logout", (req: Request, res: Response) => {
 });
 
 router.get(
-  "/view_user",
-  Auth,
+  "/view_user/:id",
+  verifyToken,
   asyncHandler(async (req: Request, res: Response) => {
     //lấy data từ redis nếu không có thì lấy từ database rồi lại set vào redis
-    let userData = await redis.get(`${req.userId}`);
+    let userData = await redis.get(`${req.params.id}`);
 
     if (!userData) {
-      const ViewUser = await User.findById(req.userId).select("-password");
+      const ViewUser = await User.findById(req.params.id).select("-password");
       if (!ViewUser) {
+        await redis.set(`${req.params.id}`, "not_found", "EX", 3600 * 24 * 3);
         throw new BadRequestError("User not found");
       }
       await redis.set(
-        `${req.userId}`,
+        `${req.params.id}`,
         JSON.stringify(ViewUser),
         "EX",
         3600 * 24 * 3
       );
       userData = JSON.stringify(ViewUser);
     }
-
-    res.json(JSON.parse(userData));
+    const parsedUserData: any = JSON.parse(userData);
+    if (parsedUserData.isDeleted) throw new BadRequestError("User not found");
+    res.json(parsedUserData);
   })
 );
 
-router.get(
+router.post(
   "/users",
+  verifyTokenAndAdmin,
   asyncHandler(async (req: Request, res: Response) => {
     // Check if list of users is cached
+
     const page = parseInt(req.body.page as string) || 1;
-    const limit = parseInt(req.body.limit as string) || 3;
+    const limit = parseInt(req.body.limit as string) || 6;
     const skip = (page - 1) * limit;
-    const users = await User.find().select("-password").skip(skip).limit(limit);
+
+    let query = {};
+    // let sortOption = req.body.sortOption;
+    let sort: { [key: string]: any } = { createdAt: req.body.sortOption };
+    //Tìm kiếm theo tên
+    // Nếu có req.body.name, tạo điều kiện tìm kiếm firstName hoặc lastName
+    if (req.body.name) {
+      // const name = req.body.name as string;
+      const name = removeDiacritics.remove(req.body.name).toLowerCase();
+      query = {
+        $text: { $search: name }, // Sử dụng regex để tìm kiếm không phân biệt hoa thường
+      }
+      sort = { score: { $meta: "textScore" } };
+      
+    }
+
+    const users = await User.find(query)
+      .select("-password")
+      .select({ score: { $meta: "textScore" } })
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
     res.status(200).json({
       message: "Lấy dữ liệu thành công",
       page: page,
@@ -167,7 +195,7 @@ router.get(
     });
   })
 );
-router.get("/validate-token", Auth, (req: Request, res: Response) => {
+router.get("/validate-token", verifyToken, (req: Request, res: Response) => {
   try {
     console.log("checkvalidate");
     res.status(200).send({ userId: req.userId });
@@ -178,47 +206,62 @@ router.get("/validate-token", Auth, (req: Request, res: Response) => {
 });
 
 router.put(
-  "/edit-info",
-  Auth,
+  "/edit-info/:id",
+  verifyToken,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const { firstName, lastName, email, phone, gender, hometown, date } =
+    const { firstName, lastName, email, phone, gender, hometown, date,fullName } =
       req.body;
-    //lay data tu redis
-    let userData = await redis.get(`${req.userId}`);
-    let user;
-    if (userData) {
-      user = JSON.parse(userData);
-    } else {
-      user = await User.findById(req.userId);
-      if (!user) {
-        throw new BadRequestError("User not found");
-      }
-    }
-    user.firstName = firstName || user.firstName;
-    user.lastName = lastName || user.lastName;
-    user.email = email || user.email;
-    user.phone = phone || user.phone;
-    user.gender = gender || user.gender;
-    user.hometown = hometown || user.hometown;
-    user.date = date || user.date;
 
-    await redis.set(`${req.userId}`, JSON.stringify(user), "EX", 3600 * 24 * 3);
-    await User.findByIdAndUpdate(req.userId, user);
-    res.status(200).send({ message: "User updated successfully" });
+    const updateFiled: any = {};
+
+    if (firstName !== undefined) updateFiled.firstName = firstName;
+    if (lastName !== undefined) updateFiled.lastName = lastName;
+    if (email !== undefined) updateFiled.email = email;
+    if (phone !== undefined) updateFiled.phone = phone;
+    if (gender !== undefined) updateFiled.gender = gender;
+    if (hometown !== undefined) updateFiled.hometown = hometown;
+    if (date !== undefined) updateFiled.date = date;
+    if (fullName !== undefined) {updateFiled.fullName=fullName;}
+    const updateUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateFiled },
+      { new: true, runValidators: true }
+    );
+    if (!updateUser) {
+      throw new BadRequestError("User not updated");
+    }
+    await redis.set(
+      `${req.userId}`,
+      JSON.stringify(updateUser),
+      "EX",
+      3600 * 24 * 3
+    );
+    res
+      .status(200)
+      .send({ message: "User updated successfully", user: updateUser });
   })
 );
 
 router.delete(
   "/delete-user/:userId",
+  verifyTokenAndAdmin,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
-    const user = await User.findByIdAndDelete(userId);
+    const user = await User.findByIdAndUpdate(userId, { isDeleted: true });
+
     if (!user) {
       throw new BadRequestError("User not found");
     }
-    await redis.del(`${userId}`);
+    await redis.set(`${req.userId}`, JSON.stringify(user), "EX", 3600 * 24 * 3);
     res.status(200).send({ message: "User deleted successfully" });
   })
 );
+
+const handleName = (fullName: string) => {
+  const namePart = fullName.trim().split(" ");
+  const lastName = namePart[0];
+  const firstName = namePart.slice(1).join(" ");
+  return { firstName, lastName };
+};
 
 export default router;
